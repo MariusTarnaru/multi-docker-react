@@ -1,0 +1,16 @@
+language: generic
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t mariust/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true mariust/react-test npm test -- --coverage
+
+after_succes:
+  - docker build -t mariust/multi-client ./client
+  - docker build -t mariust/multi-nginx ./nginx
+  - docker build -t mariust/multi-server ./server
+  - docker build -t mariust/multi-worker ./worker
